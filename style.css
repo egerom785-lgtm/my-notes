@@ -1,95 +1,93 @@
 :root {
-    --main-blue: #00a8ff;
-    --main-green: #4cd137;
-    --glass: rgba(255, 255, 255, 0.25);
+    --bg: linear-gradient(180deg, #00b4db 0%, #0083b0 100%);
+    --glass: rgba(255, 255, 255, 0.2);
+    --border: rgba(255, 255, 255, 0.4);
 }
 
 body {
     margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
-    background-attachment: fixed;
-    color: #003366;
-    overflow-x: hidden;
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg) fixed;
+    color: white;
+    min-height: 100vh;
 }
 
-/* Пузыри на фоне */
-.glass-overlay {
+.bubbles {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
     background: url('https://www.transparenttextures.com/patterns/bubbles.png');
-    pointer-events: none;
-    z-index: -1;
-    opacity: 0.3;
+    z-index: -1; opacity: 0.3;
 }
 
 header {
-    background: rgba(255, 255, 255, 0.4);
+    text-align: center;
+    padding: 30px;
+    background: rgba(255,255,255,0.1);
     backdrop-filter: blur(10px);
-    border-bottom: 2px solid rgba(255, 255, 255, 0.5);
-    padding: 20px 50px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border-bottom: 2px solid var(--border);
 }
 
-.logo {
-    font-size: 28px;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
+.logo { font-size: 40px; font-weight: 900; text-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+.logo span { color: #4ade80; }
 
-.logo span { color: var(--main-green); }
-
-nav ul { list-style: none; display: flex; gap: 20px; }
-nav a {
-    text-decoration: none;
-    color: #0055aa;
-    font-weight: 600;
-    padding: 8px 15px;
-    border-radius: 20px;
-    transition: 0.3s;
-    background: var(--glass);
-    border: 1px solid white;
-}
-
-nav a:hover {
-    background: white;
-    box-shadow: 0 0 15px white;
-    transform: translateY(-2px);
-}
-
-main {
+.game-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 25px;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 20px;
     padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-.game-card {
-    background: rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    border-radius: 25px;
+.card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 20px;
     padding: 20px;
     text-align: center;
-    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     cursor: pointer;
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+    transition: 0.3s;
+    backdrop-filter: blur(5px);
 }
 
-.game-card:hover {
-    transform: scale(1.05) rotate(2deg);
-    background: rgba(255, 255, 255, 0.5);
+.card:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.4);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
-.game-card img {
-    width: 80px;
-    height: 80px;
-    margin-bottom: 15px;
-    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
+.card .icon { font-size: 40px; margin-bottom: 10px; display: block; }
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    justify-content: center; align-items: center;
 }
 
-.game-card h3 { margin: 10px 0; font-size: 1.2rem; }
+.modal-content {
+    background: white;
+    border-radius: 25px;
+    width: 90%; max-width: 500px;
+    color: #333;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.modal-header {
+    display: flex; justify-content: space-between;
+    font-weight: bold; border-bottom: 1px solid #ddd;
+    padding-bottom: 10px; margin-bottom: 15px;
+}
+
+canvas { border-radius: 10px; background: #eee; display: block; margin: 0 auto; }
+button.aero-btn {
+    background: linear-gradient(180deg, #4ade80, #22c55e);
+    border: none; color: white; padding: 10px 20px;
+    border-radius: 10px; cursor: pointer; font-weight: bold;
+}
