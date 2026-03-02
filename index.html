@@ -2,162 +2,79 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Editor — Заметки</title>
-    <style>
-        :root {
-            --bg: #f3f4f6;
-            --accent: #4f46e5;
-        }
-        body { font-family: sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        
-        .editor-container {
-            width: 100%;
-            max-width: 900px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            height: 90vh;
-        }
-
-        .toolbar {
-            padding: 10px;
-            background: #fff;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            border-radius: 12px 12px 0 0;
-        }
-
-        .toolbar-group {
-            display: flex;
-            gap: 2px;
-            border-right: 1px solid #eee;
-            padding-right: 10px;
-            margin-right: 5px;
-        }
-
-        button, select, input[type="color"] {
-            padding: 6px 10px;
-            border: 1px solid #ddd;
-            background: #fff;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        button:hover { background: #f0f0f0; border-color: #bbb; }
-        button.active { background: #e0e7ff; border-color: var(--accent); }
-
-        #editor {
-            flex: 1;
-            padding: 40px;
-            outline: none;
-            overflow-y: auto;
-            font-size: 18px;
-            line-height: 1.5;
-        }
-
-        .footer {
-            padding: 10px 20px;
-            border-top: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            color: #666;
-        }
-    </style>
+    <title>Discord Pro Clone</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="editor-container">
-    <div class="toolbar">
-        <div class="toolbar-group">
-            <button onclick="exec('bold')" title="Жирный"><b>B</b></button>
-            <button onclick="exec('italic')" title="Курсив"><i>I</i></button>
-            <button onclick="exec('underline')" title="Подчеркнутый"><u>U</u></button>
-        </div>
-
-        <div class="toolbar-group">
-            <select onclick="exec('fontSize', this.value)">
-                <option value="3">Размер</option>
-                <option value="1">Маленький</option>
-                <option value="3">Обычный</option>
-                <option value="5">Большой</option>
-                <option value="7">Огромный</option>
-            </select>
-            <input type="color" oninput="exec('foreColor', this.value)" title="Цвет текста">
-        </div>
-
-        <div class="toolbar-group">
-            <button onclick="exec('justifyLeft')">⬅️</button>
-            <button onclick="exec('justifyCenter')">↔️</button>
-            <button onclick="exec('justifyRight')">➡️</button>
-        </div>
-
-        <div class="toolbar-group">
-            <button onclick="exec('insertUnorderedList')">• Список</button>
-            <button onclick="exec('insertOrderedList')">1. Список</button>
-        </div>
-
-        <div class="toolbar-group" style="border:none">
-            <button onclick="downloadDoc()" style="background: #10b981; color: white;">Скачать файл</button>
-            <button onclick="clearAll()" style="color: #ef4444;">Очистить</button>
-        </div>
-    </div>
-
-    <div id="editor" contenteditable="true">Начните писать здесь...</div>
-
-    <div class="footer">
-        <span>Статус: Готов к работе</span>
-        <span id="char-count">Символов: 0</span>
+<div id="auth-screen" style="position:fixed; inset:0; background: #313338; z-index:1000; display:flex; align-items:center; justify-content:center;">
+    <div style="background:#2B2D31; padding:32px; border-radius:8px; width:400px; text-align:center;">
+        <h2>Регистрация</h2>
+        <input type="text" id="reg-name" placeholder="Ник (только латиница, 4-12 симв.)" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1f22; color:white; border:none; border-radius:4px;">
+        <input type="password" id="reg-pass" placeholder="Пароль" style="width:100%; padding:10px; margin-bottom:15px; background:#1e1f22; color:white; border:none; border-radius:4px;">
+        <button onclick="handleRegister()" style="width:100%; padding:12px; background:#5865F2; border:none; color:white; border-radius:4px; cursor:pointer; font-weight:bold;">Зарегистрироваться</button>
     </div>
 </div>
 
-<script>
-    const editor = document.getElementById('editor');
+<div class="app-container">
+    <div class="sidebar-servers">
+        <div class="icon" onclick="showSection('friends')">🏠</div>
+        <div style="width:32px; height:2px; background:#35363C;"></div>
+        <div class="icon" onclick="createNewServer()">+</div>
+    </div>
 
-    // Команды для форматирования
-    function exec(command, value = null) {
-        document.execCommand(command, false, value);
-        editor.focus();
-    }
+    <div class="sidebar-channels">
+        <div class="header">Gamer Hub</div>
+        <div class="channel-list">
+            <div style="padding:10px; color:var(--muted); font-size:12px; font-weight:bold;">ТЕКСТОВЫЕ КАНАЛЫ</div>
+            <div onclick="showSection('chat')" style="padding:8px 16px; cursor:pointer;"># основной</div>
+            <div style="padding:10px; color:var(--muted); font-size:12px; font-weight:bold; margin-top:15px;">ГОЛОСОВЫЕ КАНАЛЫ</div>
+            <div onclick="showSection('voice')" style="padding:8px 16px; cursor:pointer;">🔊 Общий</div>
+        </div>
+        <div style="padding:8px; background:#232428; display:flex; align-items:center; gap:8px;">
+            <div class="avatar" style="width:32px; height:32px;" id="my-av"></div>
+            <div style="flex:1; font-size:13px;"><b id="my-nick">User</b><br><span style="color:var(--muted); font-size:11px;">#0001</span></div>
+            <span style="cursor:pointer;" onclick="toggleSettings()">⚙️</span>
+        </div>
+    </div>
 
-    // Сохранение в память браузера
-    editor.addEventListener('input', () => {
-        localStorage.setItem('pro-note-content', editor.innerHTML);
-        document.getElementById('char-count').innerText = 'Символов: ' + editor.innerText.length;
-    });
+    <div class="main-content">
+        <div id="section-chat" style="display:flex; flex-direction:column; height:100%;">
+            <div class="header"># основной</div>
+            <div class="messages-container" id="chat-flow"></div>
+            <div class="input-area">
+                <div style="background:#383a40; border-radius:8px; padding:10px; display:flex; gap:12px;">
+                    <input type="text" id="msg-input" placeholder="Написать..." style="background:none; border:none; color:white; flex:1; outline:none;" onkeypress="checkEnter(event)">
+                </div>
+            </div>
+        </div>
 
-    // Загрузка при старте
-    window.onload = () => {
-        const saved = localStorage.getItem('pro-note-content');
-        if (saved) editor.innerHTML = saved;
-    };
+        <div id="section-friends" style="display:none; padding:20px;">
+            <h2>Друзья</h2>
+            <div style="background:#1e1f22; padding:10px; border-radius:8px; display:flex; gap:10px;">
+                <input type="text" id="friend-target" placeholder="Ник#0000" style="background:none; border:none; color:white; flex:1; outline:none;">
+                <button onclick="alert('Запрос отправлен!')" style="background:#5865f2; border:none; color:white; padding:5px 15px; border-radius:4px;">Добавить</button>
+            </div>
+        </div>
 
-    function clearAll() {
-        if(confirm('Удалить всё?')) {
-            editor.innerHTML = '';
-            localStorage.removeItem('pro-note-content');
-        }
-    }
+        <div id="section-voice" class="voice-view">
+            <div class="header" style="background:#2B2D31;">🔊 Демонстрация экрана</div>
+            <div class="screen-main">
+                <video id="demo-video" autoplay></video>
+                <div id="voice-placeholder" style="text-align:center;">
+                    <div class="avatar" style="width:120px; height:120px; margin:0 auto 20px;"></div>
+                    <h3 id="demo-name">User</h3>
+                </div>
+            </div>
+            <div style="height:80px; background:#18191c; display:flex; justify-content:center; align-items:center; gap:20px;">
+                <button onclick="startScreenShare()" style="background:#5865f2; color:white; border:none; padding:10px 20px; border-radius:4px; font-weight:bold; cursor:pointer;">📺 Включить демку</button>
+                <button onclick="stopScreenShare()" style="background:#ed4245; color:white; border:none; padding:10px 20px; border-radius:4px; font-weight:bold; cursor:pointer;">Выключить</button>
+                <button onclick="showSection('chat')" style="background:#4e5058; color:white; border:none; padding:10px 20px; border-radius:4px; cursor:pointer;">Выйти</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-    function downloadDoc() {
-        const content = `
-        <html>
-            <head><meta charset="UTF-8"></head>
-            <body>${editor.innerHTML}</body>
-        </html>`;
-        const blob = new Blob([content], {type: 'text/html'});
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'note.html';
-        a.click();
-    }
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
