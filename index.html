@@ -2,76 +2,94 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Discord Pro Clone</title>
+    <title>Discord Master Clone</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="auth-screen" style="position:fixed; inset:0; background: #313338; z-index:1000; display:flex; align-items:center; justify-content:center;">
-    <div style="background:#2B2D31; padding:32px; border-radius:8px; width:400px; text-align:center;">
-        <h2>Регистрация</h2>
-        <input type="text" id="reg-name" placeholder="Ник (только латиница, 4-12 симв.)" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1f22; color:white; border:none; border-radius:4px;">
-        <input type="password" id="reg-pass" placeholder="Пароль" style="width:100%; padding:10px; margin-bottom:15px; background:#1e1f22; color:white; border:none; border-radius:4px;">
-        <button onclick="handleRegister()" style="width:100%; padding:12px; background:#5865F2; border:none; color:white; border-radius:4px; cursor:pointer; font-weight:bold;">Зарегистрироваться</button>
+<div id="auth-screen" class="modal" style="display:flex;">
+    <div class="modal-content">
+        <h2 id="auth-title">Создать аккаунт</h2>
+        <input type="text" id="reg-name" placeholder="Ник (английские буквы, 4-12 симв.)">
+        <textarea id="reg-bio" placeholder="О себе (необязательно)"></textarea>
+        <input type="password" id="reg-pass" placeholder="Пароль">
+        <button class="btn btn-primary" style="width:100%" onclick="app.auth.submit()">Продолжить</button>
+        <p style="text-align:center; font-size:12px; margin-top:10px; cursor:pointer" onclick="app.auth.toggle()">Уже есть аккаунт?</p>
     </div>
 </div>
 
 <div class="app-container">
-    <div class="sidebar-servers">
-        <div class="icon" onclick="showSection('friends')">🏠</div>
+    <div class="sidebar-servers" id="ui-servers">
+        <div class="icon active" onclick="app.ui.view('friends')">🏠</div>
         <div style="width:32px; height:2px; background:#35363C;"></div>
-        <div class="icon" onclick="createNewServer()">+</div>
+        <div class="icon" style="color:#23a559" onclick="app.ui.modal('server-modal')">+</div>
     </div>
 
     <div class="sidebar-channels">
-        <div class="header">Gamer Hub</div>
-        <div class="channel-list">
-            <div style="padding:10px; color:var(--muted); font-size:12px; font-weight:bold;">ТЕКСТОВЫЕ КАНАЛЫ</div>
-            <div onclick="showSection('chat')" style="padding:8px 16px; cursor:pointer;"># основной</div>
-            <div style="padding:10px; color:var(--muted); font-size:12px; font-weight:bold; margin-top:15px;">ГОЛОСОВЫЕ КАНАЛЫ</div>
-            <div onclick="showSection('voice')" style="padding:8px 16px; cursor:pointer;">🔊 Общий</div>
+        <div class="header" style="height:48px; display:flex; align-items:center; padding:0 16px; border-bottom:1px solid #111;">
+            <span id="ui-current-server">Главная</span>
         </div>
+        <div class="channel-list" id="ui-channels">
+            </div>
         <div style="padding:8px; background:#232428; display:flex; align-items:center; gap:8px;">
-            <div class="avatar" style="width:32px; height:32px;" id="my-av"></div>
-            <div style="flex:1; font-size:13px;"><b id="my-nick">User</b><br><span style="color:var(--muted); font-size:11px;">#0001</span></div>
-            <span style="cursor:pointer;" onclick="toggleSettings()">⚙️</span>
+            <img id="ui-my-avatar" class="msg-avatar" style="width:32px; height:32px;" src="">
+            <div style="flex:1; overflow:hidden;">
+                <b id="ui-my-name">User</b>
+            </div>
+            <span style="cursor:pointer" onclick="app.ui.modal('settings-modal')">⚙️</span>
         </div>
     </div>
 
     <div class="main-content">
-        <div id="section-chat" style="display:flex; flex-direction:column; height:100%;">
-            <div class="header"># основной</div>
+        <div id="view-chat" class="view">
             <div class="messages-container" id="chat-flow"></div>
             <div class="input-area">
-                <div style="background:#383a40; border-radius:8px; padding:10px; display:flex; gap:12px;">
-                    <input type="text" id="msg-input" placeholder="Написать..." style="background:none; border:none; color:white; flex:1; outline:none;" onkeypress="checkEnter(event)">
-                </div>
+                <input type="text" id="msg-input" placeholder="Написать..." onkeypress="app.chat.send(event)">
             </div>
         </div>
 
-        <div id="section-friends" style="display:none; padding:20px;">
+        <div id="view-friends" class="view hidden" style="padding:20px;">
             <h2>Друзья</h2>
-            <div style="background:#1e1f22; padding:10px; border-radius:8px; display:flex; gap:10px;">
-                <input type="text" id="friend-target" placeholder="Ник#0000" style="background:none; border:none; color:white; flex:1; outline:none;">
-                <button onclick="alert('Запрос отправлен!')" style="background:#5865f2; border:none; color:white; padding:5px 15px; border-radius:4px;">Добавить</button>
-            </div>
+            <input type="text" id="f-target" placeholder="Введите ник#0000">
+            <button class="btn btn-primary" onclick="app.friends.add()">Добавить в друзья</button>
+            <div id="f-list" style="margin-top:20px;"></div>
         </div>
 
-        <div id="section-voice" class="voice-view">
-            <div class="header" style="background:#2B2D31;">🔊 Демонстрация экрана</div>
+        <div id="view-voice" class="voice-view">
             <div class="screen-main">
                 <video id="demo-video" autoplay></video>
-                <div id="voice-placeholder" style="text-align:center;">
-                    <div class="avatar" style="width:120px; height:120px; margin:0 auto 20px;"></div>
-                    <h3 id="demo-name">User</h3>
-                </div>
+                <div id="demo-placeholder">Тут будет демка</div>
             </div>
-            <div style="height:80px; background:#18191c; display:flex; justify-content:center; align-items:center; gap:20px;">
-                <button onclick="startScreenShare()" style="background:#5865f2; color:white; border:none; padding:10px 20px; border-radius:4px; font-weight:bold; cursor:pointer;">📺 Включить демку</button>
-                <button onclick="stopScreenShare()" style="background:#ed4245; color:white; border:none; padding:10px 20px; border-radius:4px; font-weight:bold; cursor:pointer;">Выключить</button>
-                <button onclick="showSection('chat')" style="background:#4e5058; color:white; border:none; padding:10px 20px; border-radius:4px; cursor:pointer;">Выйти</button>
+            <div style="padding:20px; display:flex; gap:10px;">
+                <button class="btn btn-primary" onclick="app.voice.start()">Включить демку</button>
+                <button class="btn btn-danger" onclick="app.voice.stop()">Выйти</button>
             </div>
         </div>
+    </div>
+</div>
+
+<div id="settings-modal" class="modal">
+    <div class="modal-content">
+        <h2>Настройки аккаунта</h2>
+        <label>Аватар (URL):</label>
+        <input type="text" id="set-av" placeholder="https://ссылка-на-картинку.jpg">
+        <label>Ник:</label>
+        <input type="text" id="set-name">
+        <label>О себе:</label>
+        <textarea id="set-bio"></textarea>
+        <button class="btn btn-primary" onclick="app.user.saveSettings()">Сохранить</button>
+        <button class="btn" onclick="app.ui.closeModal('settings-modal')">Отмена</button>
+        <button class="btn btn-danger" style="margin-top:20px" onclick="app.auth.logout()">Выйти из аккаунта</button>
+    </div>
+</div>
+
+<div id="server-modal" class="modal">
+    <div class="modal-content">
+        <h2>Создать сервер</h2>
+        <input type="text" id="srv-name" placeholder="Название сервера">
+        <input type="text" id="srv-av" placeholder="URL аватара сервера">
+        <button class="btn btn-primary" onclick="app.servers.create()">Создать</button>
+        <button class="btn" onclick="app.ui.closeModal('server-modal')">Отмена</button>
     </div>
 </div>
 
