@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Editor — Заметки</title>
+    <style>
+        :root {
+            --bg: #f3f4f6;
+            --accent: #4f46e5;
+        }
+        body { font-family: sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        
+        .editor-container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+        }
+
+        .toolbar {
+            padding: 10px;
+            background: #fff;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .toolbar-group {
+            display: flex;
+            gap: 2px;
+            border-right: 1px solid #eee;
+            padding-right: 10px;
+            margin-right: 5px;
+        }
+
+        button, select, input[type="color"] {
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover { background: #f0f0f0; border-color: #bbb; }
+        button.active { background: #e0e7ff; border-color: var(--accent); }
+
+        #editor {
+            flex: 1;
+            padding: 40px;
+            outline: none;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        .footer {
+            padding: 10px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+<div class="editor-container">
+    <div class="toolbar">
+        <div class="toolbar-group">
+            <button onclick="exec('bold')" title="Жирный"><b>B</b></button>
+            <button onclick="exec('italic')" title="Курсив"><i>I</i></button>
+            <button onclick="exec('underline')" title="Подчеркнутый"><u>U</u></button>
+        </div>
+
+        <div class="toolbar-group">
+            <select onclick="exec('fontSize', this.value)">
+                <option value="3">Размер</option>
+                <option value="1">Маленький</option>
+                <option value="3">Обычный</option>
+                <option value="5">Большой</option>
+                <option value="7">Огромный</option>
+            </select>
+            <input type="color" oninput="exec('foreColor', this.value)" title="Цвет текста">
+        </div>
+
+        <div class="toolbar-group">
+            <button onclick="exec('justifyLeft')">⬅️</button>
+            <button onclick="exec('justifyCenter')">↔️</button>
+            <button onclick="exec('justifyRight')">➡️</button>
+        </div>
+
+        <div class="toolbar-group">
+            <button onclick="exec('insertUnorderedList')">• Список</button>
+            <button onclick="exec('insertOrderedList')">1. Список</button>
+        </div>
+
+        <div class="toolbar-group" style="border:none">
+            <button onclick="downloadDoc()" style="background: #10b981; color: white;">Скачать файл</button>
+            <button onclick="clearAll()" style="color: #ef4444;">Очистить</button>
+        </div>
+    </div>
+
+    <div id="editor" contenteditable="true">Начните писать здесь...</div>
+
+    <div class="footer">
+        <span>Статус: Готов к работе</span>
+        <span id="char-count">Символов: 0</span>
+    </div>
+</div>
+
+<script>
+    const editor = document.getElementById('editor');
+
+    // Команды для форматирования
+    function exec(command, value = null) {
+        document.execCommand(command, false, value);
+        editor.focus();
+    }
+
+    // Сохранение в память браузера
+    editor.addEventListener('input', () => {
+        localStorage.setItem('pro-note-content', editor.innerHTML);
+        document.getElementById('char-count').innerText = 'Символов: ' + editor.innerText.length;
+    });
+
+    // Загрузка при старте
+    window.onload = () => {
+        const saved = localStorage.getItem('pro-note-content');
+        if (saved) editor.innerHTML = saved;
+    };
+
+    function clearAll() {
+        if(confirm('Удалить всё?')) {
+            editor.innerHTML = '';
+            localStorage.removeItem('pro-note-content');
+        }
+    }
+
+    function downloadDoc() {
+        const content = `
+        <html>
+            <head><meta charset="UTF-8"></head>
+            <body>${editor.innerHTML}</body>
+        </html>`;
+        const blob = new Blob([content], {type: 'text/html'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'note.html';
+        a.click();
+    }
+</script>
+
+</body>
+</html>
