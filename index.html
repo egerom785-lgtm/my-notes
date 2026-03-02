@@ -2,97 +2,32 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Discord Master Clone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroGames | 100+ Игр Онлайн</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="glass-overlay"></div>
+    
+    <header>
+        <div class="logo">Aero<span>Games</span></div>
+        <nav>
+            <ul>
+                <li><a href="#" onclick="filterGames('all')">Все</a></li>
+                <li><a href="#" onclick="filterGames('arcade')">Аркады</a></li>
+                <li><a href="#" onclick="filterGames('logic')">Логика</a></li>
+                <li><a href="#" onclick="filterGames('classic')">Классика</a></li>
+            </ul>
+        </nav>
+    </header>
 
-<div id="auth-screen" class="modal" style="display:flex;">
-    <div class="modal-content">
-        <h2 id="auth-title">Создать аккаунт</h2>
-        <input type="text" id="reg-name" placeholder="Ник (английские буквы, 4-12 симв.)">
-        <textarea id="reg-bio" placeholder="О себе (необязательно)"></textarea>
-        <input type="password" id="reg-pass" placeholder="Пароль">
-        <button class="btn btn-primary" style="width:100%" onclick="app.auth.submit()">Продолжить</button>
-        <p style="text-align:center; font-size:12px; margin-top:10px; cursor:pointer" onclick="app.auth.toggle()">Уже есть аккаунт?</p>
-    </div>
-</div>
+    <main id="game-container">
+        </main>
 
-<div class="app-container">
-    <div class="sidebar-servers" id="ui-servers">
-        <div class="icon active" onclick="app.ui.view('friends')">🏠</div>
-        <div style="width:32px; height:2px; background:#35363C;"></div>
-        <div class="icon" style="color:#23a559" onclick="app.ui.modal('server-modal')">+</div>
-    </div>
+    <footer>
+        <p>&copy; 2026 AeroGames Portal. Чистый глянцевый кайф.</p>
+    </footer>
 
-    <div class="sidebar-channels">
-        <div class="header" style="height:48px; display:flex; align-items:center; padding:0 16px; border-bottom:1px solid #111;">
-            <span id="ui-current-server">Главная</span>
-        </div>
-        <div class="channel-list" id="ui-channels">
-            </div>
-        <div style="padding:8px; background:#232428; display:flex; align-items:center; gap:8px;">
-            <img id="ui-my-avatar" class="msg-avatar" style="width:32px; height:32px;" src="">
-            <div style="flex:1; overflow:hidden;">
-                <b id="ui-my-name">User</b>
-            </div>
-            <span style="cursor:pointer" onclick="app.ui.modal('settings-modal')">⚙️</span>
-        </div>
-    </div>
-
-    <div class="main-content">
-        <div id="view-chat" class="view">
-            <div class="messages-container" id="chat-flow"></div>
-            <div class="input-area">
-                <input type="text" id="msg-input" placeholder="Написать..." onkeypress="app.chat.send(event)">
-            </div>
-        </div>
-
-        <div id="view-friends" class="view hidden" style="padding:20px;">
-            <h2>Друзья</h2>
-            <input type="text" id="f-target" placeholder="Введите ник#0000">
-            <button class="btn btn-primary" onclick="app.friends.add()">Добавить в друзья</button>
-            <div id="f-list" style="margin-top:20px;"></div>
-        </div>
-
-        <div id="view-voice" class="voice-view">
-            <div class="screen-main">
-                <video id="demo-video" autoplay></video>
-                <div id="demo-placeholder">Тут будет демка</div>
-            </div>
-            <div style="padding:20px; display:flex; gap:10px;">
-                <button class="btn btn-primary" onclick="app.voice.start()">Включить демку</button>
-                <button class="btn btn-danger" onclick="app.voice.stop()">Выйти</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="settings-modal" class="modal">
-    <div class="modal-content">
-        <h2>Настройки аккаунта</h2>
-        <label>Аватар (URL):</label>
-        <input type="text" id="set-av" placeholder="https://ссылка-на-картинку.jpg">
-        <label>Ник:</label>
-        <input type="text" id="set-name">
-        <label>О себе:</label>
-        <textarea id="set-bio"></textarea>
-        <button class="btn btn-primary" onclick="app.user.saveSettings()">Сохранить</button>
-        <button class="btn" onclick="app.ui.closeModal('settings-modal')">Отмена</button>
-        <button class="btn btn-danger" style="margin-top:20px" onclick="app.auth.logout()">Выйти из аккаунта</button>
-    </div>
-</div>
-
-<div id="server-modal" class="modal">
-    <div class="modal-content">
-        <h2>Создать сервер</h2>
-        <input type="text" id="srv-name" placeholder="Название сервера">
-        <input type="text" id="srv-av" placeholder="URL аватара сервера">
-        <button class="btn btn-primary" onclick="app.servers.create()">Создать</button>
-        <button class="btn" onclick="app.ui.closeModal('server-modal')">Отмена</button>
-    </div>
-</div>
-
-<script src="script.js"></script>
+    <script src="games.js"></script>
 </body>
 </html>
