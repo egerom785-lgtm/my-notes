@@ -2,28 +2,40 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>AeroArcade 2026 | 30 Games</title>
+    <title>Discord Clone</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="bubbles"></div>
-    <header>
-        <div class="logo">AERO<span>ARCADE</span></div>
-        <p>Легендарный портал глянцевых игр</p>
-    </header>
+    <div id="app">
+        <nav class="servers">
+            <div class="server-icon active">H</div>
+            <div class="server-icon">+</div>
+        </nav>
 
-    <main class="game-grid" id="grid"></main>
-
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span id="game-title">Название игры</span>
-                <button onclick="closeGame()">×</button>
+        <aside class="channels">
+            <header><h3>Мой Сервер</h3></header>
+            <div class="channel-list">
+                <div class="category">Текстовые каналы</div>
+                <div class="channel active"># основной</div>
+                <div class="category">Голосовые каналы</div>
+                <div class="channel">🔈 Общий</div>
             </div>
-            <div id="game-container"></div>
-        </div>
+            <div class="user-settings">
+                <img id="avatar" src="default-avatar.png" alt="">
+                <span id="username">User#0001</span>
+                <button onclick="openSettings()">⚙️</button>
+            </div>
+        </aside>
+
+        <main class="chat-area">
+            <div id="messages"></div>
+            <div class="input-container">
+                <input type="text" id="msg-input" placeholder="Написать в #основной">
+            </div>
+        </main>
     </div>
 
-    <script src="script.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="client.js"></script>
 </body>
 </html>
